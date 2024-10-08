@@ -28,7 +28,47 @@ def add_task():
 
 def edit_task():
     """Изменяет название, описание, приоритет или срок дедлайна задачи."""
-    pass
+    symbols = input('Напишите уникальный набор символов или слов задачи, которую хотите удалить')
+    flag = True
+    
+    for entry in tasks:
+        if symbols in entry['title']:
+            task = entry
+            break
+        else:
+            flag = False
+            print('Такой задачи нет. Попробуйте снова')
+            edit_task()
+    
+    if flag == True:
+        while True:
+            print('Параметры задачи для изменения')
+            print()
+            print('1. Название задачи')
+            print('2. Описание задачи')
+            print('3. Приоритет задачи')
+            print('4. Дедлайн')
+            print('5. Завершить изменение задачи' )
+        
+            num = int(input('Выберите действие (1-5)'))
+
+            if num == 1:
+                task['title'] = input('Введите новое название задачи')
+                print(f'Название задачи успешно изменено на {task['title']}')
+            elif num == 2:
+                task['description'] = input('Введите новое описание задачи')
+                print(f'Описание задачи успешно изменено на {task['description']}')
+            elif num == 3:
+                task['title'] = input('Введите новое название задачи')
+                print(f'Название задачи успешно изменено на {task['title']}')
+            elif num == 4:
+                task['due_time'] = datetime.strptime(input('Введите дату и время дедлайна в формате dd.mm.yyyy hh:mm'), '%d.%m.%Y %H:%M')
+                print(f'Дедлайн успешно изменен на {task['due_time']}')
+            elif num == 5:
+                print('Изменение задачи завершено')
+                break
+            else:
+                print('Неверный ввод, попробуйте снова')
 
 
 def delete_task():
