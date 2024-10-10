@@ -5,6 +5,16 @@ tasks = []
 num_id = 0
 
 
+def find_task(phrase):
+    if tasks:
+        for task in tasks:
+            if phrase in task['title']:
+                return task
+        else:
+            print('Такой задачи нет. Попробуйте снова')
+            find_task(phrase)
+
+
 def show_tasks():
     """Выводит в консоль задачи."""
     if tasks:
@@ -16,79 +26,97 @@ def show_tasks():
 
 def add_task():
     """Добавляет новую задачу в список задач."""
-    print('Добавим новую задачу!')
-    title = input('Введите название задачи. Поле не может быть пустым.')
-    description = input('Можем добавить описание задачи, но это необязательно)')
-    priority = int(input('Необходимо установить приоритет задачи. 1 — высокий, 2 — средний, 3 — низкий. Обязательное поле.'))
-    time_stamp = datetime.now()
-    due_date = datetime.strptime(input('Введите дату и время дедлайна в формате dd.mm.yyyy hh:mm'), '%d.%m.%Y %H:%M')
     num_id += 1
-    tasks.append({'id': num_id, 'title': title, 'description': description, 'priority': priority, 'time_stamp': time_stamp, 'due_time': due_date})
+    title = ''
+    print('Добавим новую задачу!')
+    while title.strip() == '':
+        title = input('Название задачи: ')
+    description = input('Описание задачи: ')
+    priority = int(input('Приоритет задачи. 1 — высокий, 2 — средний, 3 — низкий: '))
+    time_stamp = datetime.now()
+    due_date = datetime.strptime(
+        input('Дата и время дедлайна в формате dd.mm.yyyy hh:mm: '), '%d.%m.%Y %H:%M'
+    )
+    tasks.append({
+        'id': num_id,
+        'название_задачи': title,
+        'описание': description,
+        'приоритет': priority,
+        'время_создания': time_stamp,
+        'дедлайн': due_date,
+        'статус_выполнения': 'В работе'
+    })
+
+
+CHANGED_DATA = {
+    1: task['title'] = input('Название задачи: '),
+    2: task['description'] = input('Описание задачи: '),
+    3: task['priority'] = int(input(
+        'Приоритет задачи. 1 — высокий, 2 — средний, 3 — низкий: '
+    )),
+    4: task['due_time'] = datetime.strptime(input(
+        'Дата и время дедлайна в формате dd.mm.yyyy hh:mm'), '%d.%m.%Y %H:%M'
+    )
+}
 
 
 def edit_task():
     """Изменяет название, описание, приоритет или срок дедлайна задачи."""
-    symbols = input('Напишите уникальный набор символов или слов задачи, которую хотите удалить')
-    flag = True
+    phrase = input(
+        'Напишите уникальный набор символов или слов задачи, которую хотите изменить'
+    )
+    task = find_task(phrase)
     
-    for entry in tasks:
-        if symbols in entry['title']:
-            task = entry
+    while True:
+        print('Параметры задачи для изменения')
+        print()
+        print('1. Название задачи')
+        print('2. Описание задачи')
+        print('3. Приоритет задачи')
+        print('4. Дедлайн')
+        print('5. Завершить изменение задачи' )
+        
+        number_command = int(input('Выберите действие (1-5)'))
+
+        if number_command in CHANGED_DATA:
+            if number_command == 1:
+                while task['title'].strip() == '':
+                    CHANGED_DATA[number_command]
+            else:
+                CHANGED_DATA[number_command]
+            print('Успешно изменено')
+        elif number_command == 5:
+            print('Изменение задачи завершено')
             break
         else:
-            flag = False
-            print('Такой задачи нет. Попробуйте снова')
-            edit_task()
-    
-    if flag == True:
-        while True:
-            print('Параметры задачи для изменения')
-            print()
-            print('1. Название задачи')
-            print('2. Описание задачи')
-            print('3. Приоритет задачи')
-            print('4. Дедлайн')
-            print('5. Завершить изменение задачи' )
-        
-            num = int(input('Выберите действие (1-5)'))
-
-            if num == 1:
-                task['title'] = input('Введите новое название задачи')
-                print(f'Название задачи успешно изменено на {task['title']}')
-            elif num == 2:
-                task['description'] = input('Введите новое описание задачи')
-                print(f'Описание задачи успешно изменено на {task['description']}')
-            elif num == 3:
-                task['title'] = input('Введите новое название задачи')
-                print(f'Название задачи успешно изменено на {task['title']}')
-            elif num == 4:
-                task['due_time'] = datetime.strptime(input('Введите дату и время дедлайна в формате dd.mm.yyyy hh:mm'), '%d.%m.%Y %H:%M')
-                print(f'Дедлайн успешно изменен на {task['due_time']}')
-            elif num == 5:
-                print('Изменение задачи завершено')
-                break
-            else:
-                print('Неверный ввод, попробуйте снова')
-
+            print('Неверный ввод, попробуйте снова')
+            
 
 def delete_task():
-    task = input('Напишите уникальный набор символов или слов задачи, которую хотите удалить')
-    for key in tasks:
-        if task in key:
-            tasks[key].pop()
-            break
-        else:
-            print('Такой задачи нет')
+    phrase = input(
+        'Напишите уникальный набор символов или слов задачи, которую хотите удалить'
+    )
+    task = find_task(phrase)
+    for t in range(len(tasks)):
+        if task['id'] == tasks[t]['id']:
+            del tasks[t]
 
 
 def complete_task():
-    task = input('Напишите уникальный набор символов или слов задачи, которую хотите удалить')
-    for key in tasks:
-        if task in key:
-            tasks[key] = True
-            break
-        else:
-            print('Такой задачи нет')
+    phrase = input(
+        'Напишите уникальный набор символов или слов задачи, статус которой хотите изменить'
+    )
+    task = find_task(phrase)
+    task['статус_выполнения'] = 'Выполнена'
+
+
+COMMANDS = {
+     1: show_tasks(),
+     2: add_task(),
+     3: edit_task(),
+     4: delete_task(),
+     5: complete_task()
+}
 
 
 def main():
@@ -106,19 +134,11 @@ def main():
         print('6. Выйти')
         print()
         
-        num = int(input('Выберите действие (1-6)'))
+        number_command = int(input('Выберите действие (1-6)'))
 
-        if num == 1:
-            show_tasks()
-        elif num == 2:
-            add_task()
-        elif num == 3:
-            edit_task()
-        elif num == 4:
-            delete_task()
-        elif num == 5:
-            complete_task()
-        elif num == 6:
+        if number_command in COMMANDS:
+            COMMANDS[number_command]
+        elif number_command == 6:
             print('Завершение работы')
             break
         else:
